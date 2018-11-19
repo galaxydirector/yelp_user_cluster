@@ -1,6 +1,6 @@
 # k-means algorithm
 
-
+import numpy as np
 
 
 
@@ -35,34 +35,7 @@ def kmeans_original(data, k):
 			# update centers
 			centers = [np.mean(cluster[the_center],axes=0) for i in range(k)] # average all the rows
 
-
-
-
-
-
-
-
-
-
-
-def kmeans_minibatch_pd_implementation(batch_data, centers):
-
-def kmeans_2(data_set, k, mini_size):
-	# initialize k centers
-	boundary_max = np.max(data,axis=0) 
-	boundary_min = np.min(data,axis=0)
-	centers = np.multiply(np.random.rand(k,len(boundary_max)),np.subtract(boundary_max-boundary_min)) + boundary_min
-
-	data_size = len(data_set)
-	# for loop iteration
-	for i in range(ite):
-		# select a small dataset
-		selected_ind = np.random.random_integers(0,data_size-1,mini_size)
-		centers = kmeans_minibatch_np_implementation(selected_ind, centers)
-
-	return centers
-
-def kmeans_minibatch_np_implementation(batch_data_ind, centers):
+def kmeans_minibatch_np_implementation_original(batch_data_ind, centers):
 	# batch have to be quite large in order to have properly update
 	cluster = {key: [] for key in range(k)}
 	loss = 0
@@ -77,3 +50,48 @@ def kmeans_minibatch_np_implementation(batch_data_ind, centers):
 
 	# update centers
 	return [np.mean(cluster[the_center],axis=0) for i in range(k)]
+
+
+
+
+def kmeans_singlebatch_update(batch_data, centers):
+	# batch have to be quite large in order to have properly update
+	cluster = {key: [] for key in range(k)}
+	loss = 0
+	############ can we not use for loop but use dataframe to process it?###############
+	
+	# calculate euclidean by the minibatch data set to each centers 
+	euclidean_distance_to_centers = np.array([np.sqrt(np.sum(np.square(np.subtract(batch_data,i)),axis=1)) for i in centers]).T
+
+	for j in range(len(batch_data)):
+		single_row_distance = euclidean_distance_to_centers[j]
+		the_center,min_distance = min(enumerate(single_row_distance), key = lambda x: x[1])
+		loss += min_distance
+		cluster[the_center].append(m)
+
+	# update centers
+	return [np.mean(cluster[the_center],axis=0) for i in range(k)]
+
+
+def kmeans_2(data_set, k, mini_size, iteration):
+	# initialize k centers
+	boundary_max = np.max(data,axis=0) 
+	boundary_min = np.min(data,axis=0)
+	centers = np.multiply(np.random.rand(k,len(boundary_max)),np.subtract(boundary_max-boundary_min)) + boundary_min
+
+	data_size = len(data_set)
+	# for loop iteration
+	for i in range(iteration):
+		# select a small dataset
+		selected_ind = np.random.random_integers(0,data_size-1,mini_size)
+		# centers = kmeans_minibatch_np_implementation(selected_ind, centers)
+		centers = kmeans_singlebatch_update(data_set[selected_ind], centers)
+
+	return centers
+
+
+if __name__ == '__main__':
+	centers = kmeans_2(data_set, k, mini_size)
+
+
+
