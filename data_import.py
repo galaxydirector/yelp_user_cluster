@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from seeding import *
 
 def data_import(path):
 	raw_data = pd.read_csv(path)
@@ -24,11 +25,15 @@ def data_normalization(data_set):
 	data_set = (data_set-mean)/standard_deviation
 	return data_set
 
+def main():
+	path = '/Users/renzhihuang/Desktop/yelp_user_cluster/yelp.csv'
+	data_set = data_import(path)
+	data_set = data_normalization(data_set)
+	print(data_set)
+	print(data_set.shape)
+	print(data_set.dtype)
+	centers = kmean_plus_plus(data_set,10)
+	print(centers)
 
-path = '/Users/renzhihuang/Desktop/yelp_user_cluster/yelp.csv'
-data_set = data_import(path)
-data_set = data_normalization(data_set)
-print(data_set)
-print(data_set.shape)
-print(data_set.dtype)
-
+if __name__ == '__main__':
+	main()
