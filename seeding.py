@@ -1,5 +1,8 @@
 import numpy as np
 import random
+from data_import import *
+import time
+
 
 def distance_sq(data,center):
 	'''
@@ -21,17 +24,15 @@ def kmean_plus_plus(data_set,k):
 	users_index = [i for i in range(m)]
 	center1 = data_set[random.randint(0,m-1),:]
 	centers.append(center1)
+	min_dis = distance_sq(data_set,center1)
 	for i in range(1,k):
-		next_dis = np.sum(np.multiply((data_set-centers[0]),(data_set-centers[0])),1)
-		for j in range(1,i):
-			curr_center = centers[j]
-			curr_dis = np.sum(np.multiply((data_set-curr_center),(data_set-curr_center)),1)
-			next_dis = np.minimum(curr_dis,next_dis)
-		pro = next_dis/np.sum(next_dis)
-		#print(pro)
+		pro = min_dis/np.sum(min_dis)
 		picked_index = np.random.choice(users_index,p=pro)
 		new_center = data_set[picked_index,:]
 		centers.append(new_center)
+		curr_dis = distance_sq(data_set,new_center)
+		min_dis = np.minimum(min_dis,curr_dis)
+		#print(i)
 	return np.stack(centers,axis=0)
 
 def random_centers(data_set,k):
@@ -93,9 +94,11 @@ def kmeans_2(data_set, k, mini_size, iteration,centers):
 		selected_ind = np.random.random_integers(0,m-1,mini_size)
 		new_centers = kmeans_singlebatch_update(data_set[selected_ind,:], centers, 1/i)
 		
-		if(i%50==0):
-			mean_distance = evaluate(data_set,new_centers)
+		if(i%1==0):
+			mean_distance, max_distance, min_distance = evaluate(data_set,new_centers)
 			print("The mean distance is " + str(round(mean_distance,6)))
+			print("The max distance is " + str(round(max_distance,6)))
+			print("The min distance is " + str(round(min_distance,6)))
 			diff = np.sum(np.square(centers - new_centers))
 			print("The center difference is " + str(round(diff,6)))
 		centers = new_centers
@@ -115,4 +118,24 @@ def evaluate(data_set,centers):
 		clusters[updated_index] = i
 		min_dis[updated_index] = curr_dis[updated_index]
 	mean_distance = np.mean(min_dis)
-	return mean_distance
+	max_distance = np.max(min_dis)
+	min_distance = np.min(min_dis)
+	return mean_distance, max_distance, min_distance
+
+
+def main():
+	path = '/Users/renzhihuang/Desktop/yelp_user_cluster/yelp.csv'
+	data_set = data_import(path)
+	data_set = data_normalization(data_set)
+	print('Data import completed!')
+	k = 50
+	mini_size = 100000
+	iteration = 1000
+	
+	s = time.time()
+	centers = kmean_plus_plus(data_set,k)
+	#distance_sq(data_set,centers[0,:])
+	print(time.time()-s)
+
+if __name__ == '__main__':
+	main()
