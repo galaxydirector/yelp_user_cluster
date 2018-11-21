@@ -18,8 +18,17 @@ def data_import(path):
 	data_set = np.stack(feature_list,axis=1)
 	return data_set
 
+def data_normalization(data_set):
+	mean  = np.mean(data_set,axis=0)
+	standard_deviation = np.std(data_set,axis=0)
+	data_set = (data_set-mean)/standard_deviation
+	return data_set
+
+
 path = '/Users/renzhihuang/Desktop/yelp_user_cluster/yelp.csv'
 data_set = data_import(path)
+data_set = data_normalization(data_set)
+print(data_set)
 print(data_set.shape)
 print(data_set.dtype)
 
