@@ -54,7 +54,7 @@ def kmeans_minibatch_np_implementation_original(batch_data_ind, centers):
 
 
 
-def kmeans_singlebatch_update(batch_data, centers):
+def kmeans_singlebatch_update_old2(batch_data, centers, eta):
 	# batch have to be quite large in order to have properly update
 	cluster = {key: [] for key in range(k)}
 	loss = 0
@@ -74,6 +74,7 @@ def kmeans_singlebatch_update(batch_data, centers):
 
 
 def kmeans_2(data_set, k, mini_size, iteration):
+	eta = 1/np.sqrt(iteration) # default learning rate
 	# initialize k centers
 	boundary_max = np.max(data,axis=0) 
 	boundary_min = np.min(data,axis=0)
@@ -85,9 +86,31 @@ def kmeans_2(data_set, k, mini_size, iteration):
 		# select a small dataset
 		selected_ind = np.random.random_integers(0,data_size-1,mini_size)
 		# centers = kmeans_minibatch_np_implementation(selected_ind, centers)
-		centers = kmeans_singlebatch_update(data_set[selected_ind], centers)
+		centers = kmeans_singlebatch_update(data_set[selected_ind], centers, eta)
 
 	return centers
+
+def kmeans_singlebatch_update(batch_data, centers, eta):
+	# batch have to be quite large in order to have properly update
+	cluster = {key: [] for key in range(k)}
+	loss = 0
+
+
+	# calculate distance from point to each centers in original coordinates
+	subtraction_to_centers = [np.subtract(batch_data,i) for i in centers]
+	# calculate euclidean by the minibatch data set to each centers
+	euclidean_distance_to_centers = np.array([np.sqrt(np.sum(np.square(np.subtract(batch_data,i)),axis=1)) for i in centers]).T
+
+	for j in range(len(batch_data)):
+		the_center,min_distance = min(enumerate(euclidean_distance_to_centers[j]), key = lambda x: x[1])
+		loss += min_distance
+		cluster[the_center].append(subtraction_to_centers[the_center][j])
+
+	print("Batch loss is {}".format(loss))
+
+	# update centers
+	return centers - eta*[np.mean(cluster[the_center],axis=0) for i in range(k)]
+
 
 
 if __name__ == '__main__':
