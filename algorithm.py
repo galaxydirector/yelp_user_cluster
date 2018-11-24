@@ -72,29 +72,10 @@ def kmeans_singlebatch_update_old2(batch_data, centers, eta):
 	# update centers
 	return [np.mean(cluster[the_center],axis=0) for i in range(k)]
 
-
-def kmeans_2(data_set, k, mini_size, iteration):
-	eta = 1/np.sqrt(iteration) # default learning rate
-	# initialize k centers
-	boundary_max = np.max(data,axis=0) 
-	boundary_min = np.min(data,axis=0)
-	centers = np.multiply(np.random.rand(k,len(boundary_max)),np.subtract(boundary_max-boundary_min)) + boundary_min
-
-	data_size = len(data_set)
-	# for loop iteration
-	for i in range(iteration):
-		# select a small dataset
-		selected_ind = np.random.random_integers(0,data_size-1,mini_size)
-		# centers = kmeans_minibatch_np_implementation(selected_ind, centers)
-		centers = kmeans_singlebatch_update(data_set[selected_ind], centers, eta)
-
-	return centers
-
-def kmeans_singlebatch_update(batch_data, centers, eta):
+def kmeans_singlebatch_update(batch_data, centers, eta, train = True):
 	# batch have to be quite large in order to have properly update
-	cluster = {key: [] for key in range(k)}
+	cluster = {key: [] for key in range(len(centers))}
 	loss = 0
-
 
 	# calculate distance from point to each centers in original coordinates
 	subtraction_to_centers = [np.subtract(batch_data,i) for i in centers]
@@ -108,8 +89,29 @@ def kmeans_singlebatch_update(batch_data, centers, eta):
 
 	print("Batch loss is {}".format(loss))
 
-	# update centers
-	return centers - eta*[np.mean(cluster[the_center],axis=0) for i in range(k)]
+	if train:
+		return centers + eta*np.array([np.mean(cluster[the_center],axis=0) for i in range(len(centers))])
+	else:
+		return loss
+
+def kmeans_2(data_set, k, mini_size, iteration):
+	eta = 1/np.sqrt(iteration) # default learning rate
+	# initialize k centers
+	boundary_max = np.max(data_set,axis=0) 
+	boundary_min = np.min(data_set,axis=0)
+	kkk = np.random.rand(k,len(boundary_max))
+	mmm = np.subtract(boundary_max,boundary_min)
+	centers = np.multiply(kkk,mmm) + boundary_min
+
+	data_size = len(data_set)
+	# for loop iteration
+	for i in range(iteration):
+		# select a small dataset
+		selected_ind = np.random.random_integers(0,data_size-1,mini_size)
+		# centers = kmeans_minibatch_np_implementation(selected_ind, centers)
+		centers = kmeans_singlebatch_update(data_set[selected_ind], centers, eta)
+
+	return centers
 
 
 
