@@ -1,7 +1,8 @@
 import os
+import time
 from data_import import *
-# from seeding import *
-from algorithm import *
+from seeding import *
+# from algorithm import *
 
 def main():
 	
@@ -56,4 +57,6 @@ def main_2():
 	# centers = kmeans_2(data_set, k, mini_size, iteration,centers)
 
 if __name__ == '__main__':
-	main_2()
+	start = time.time()
+	main()
+	print("duration",time.time()-start)

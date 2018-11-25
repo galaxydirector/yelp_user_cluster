@@ -59,7 +59,7 @@ def find_cluster(data_set,centers):
 	for i in range(1,k):
 		curr_dis = distance_sq(data_set,centers[i,:])
 		updated_index = np.where(curr_dis<min_dis)[0]
-		clusters[updated_index] = i
+		clusters[updated_index] = i ########################
 		min_dis[updated_index] = curr_dis[updated_index]
 	return clusters
 
@@ -94,7 +94,7 @@ def kmeans_2(data_set, k, mini_size, iteration,centers):
 		selected_ind = np.random.random_integers(0,m-1,mini_size)
 		new_centers = kmeans_singlebatch_update(data_set[selected_ind,:], centers, 1/i)
 		
-		if(i%1==0):
+		if(i%10==0):
 			mean_distance, max_distance, min_distance = evaluate(data_set,new_centers)
 			print("The mean distance is " + str(round(mean_distance,6)))
 			print("The max distance is " + str(round(max_distance,6)))
@@ -117,9 +117,10 @@ def evaluate(data_set,centers):
 		updated_index = np.where(curr_dis<min_dis)[0]
 		clusters[updated_index] = i
 		min_dis[updated_index] = curr_dis[updated_index]
-	mean_distance = np.mean(min_dis)
-	max_distance = np.max(min_dis)
-	min_distance = np.min(min_dis)
+	print("shape of min_dis", min_dis.shape)
+	mean_distance = np.mean(np.sqrt(min_dis))
+	max_distance = np.max(np.sqrt(min_dis))
+	min_distance = np.min(np.sqrt(min_dis))
 	return mean_distance, max_distance, min_distance
 
 
