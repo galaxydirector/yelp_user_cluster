@@ -1,5 +1,6 @@
 import os
 import time
+import pandas as pd
 from data_import import *
 from seeding import *
 # from algorithm import *
@@ -22,7 +23,7 @@ def main():
 
 	k = 5
 	mini_size = 100000
-	iteration = 100
+	iteration = 200
 
 	centers = random_centers(data_set,k)
 	# centers = kmean_plus_plus(data_set,k)
@@ -55,6 +56,12 @@ def main_2():
 	# #print(centers)
 
 	# centers = kmeans_2(data_set, k, mini_size, iteration,centers)
+
+def write_loss(data):
+	"""loss writer into csv"""
+	out_path = "./loss.csv"
+	output = pd.DataFrame(data, columns = ['k','mean_loss'])
+	output.to_csv(out_path,index=False,header=['k','mean_loss'],mode='w')
 
 if __name__ == '__main__':
 	start = time.time()
