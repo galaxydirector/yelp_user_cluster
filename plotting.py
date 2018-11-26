@@ -2,8 +2,9 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from algorithm import plot_cluster_generate
 
-def plot_clusters(data, cluster, dim1, dim2, output_path):
+def plot_clusters(data, cluster, dim1, dim2, dim1name, dim2name, output_path):
 	"""
 	data & cluster produce clustered data saved in a dict
 	dim1 and dim2 are features in interest
@@ -22,10 +23,10 @@ def plot_clusters(data, cluster, dim1, dim2, output_path):
 
 		plt.scatter(x, y, color=c)
 
-	plt.xlabel('dimension {}'.format(dim1))
-	plt.ylabel('dimension {}'.format(dim2))
-	path = os.path.join(output_path, '{}.png'.format('clusters'))
-	plt.savefig(path)
+	plt.xlabel('dimension {}'.format(dim1name))
+	plt.ylabel('dimension {}'.format(dim2name))
+	# path = os.path.join(output_path, '{}.png'.format('clusters'))
+	plt.savefig(output_path)
 
 
 

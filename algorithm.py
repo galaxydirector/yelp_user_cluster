@@ -8,8 +8,8 @@ def kmc2(data_set, k, temperature):
 	dis = distance_sq(data_set,centers)
 	q = 1/2/n + 1/2*dis/np.sum(dis)
 	scaled_q = np.log(q) / temperature
-    scaled_q = np.exp(scaled_q - np.logaddexp.reduce(scaled_q))
-    
+	scaled_q = np.exp(scaled_q - np.logaddexp.reduce(scaled_q))
+	
 	# block chain length m = 100
 	m = 100
 	for i in range(1,k):
@@ -40,7 +40,7 @@ def distance_sq(data,center):
 	distance_sq = np.sum(np.multiply((data - center),(data - center)),1)
 	return distance_sq
 
-def init_centers(data_set, k):
+def kpp_init_centers(data_set, k):
 	""" Renzhi Version
 	This algorithm serves the purpose of initialize centers by using markov chain 
 	to find the furthest points to choose
@@ -64,26 +64,26 @@ def init_centers(data_set, k):
 	return np.stack(centers,axis=0)
 
 # def kmean_plus_plus(data_set,k):
-# 	'''
-# 	data_set: m x d numpy array, m is the number of users, d is the number of features
-# 	k: number of centers
-# 	return: the initial centers, k x d numpy array
-# 	'''
-# 	centers = []
-# 	m,d = data_set.shape
-# 	users_index = [i for i in range(m)]
-# 	center1 = data_set[random.randint(0,m-1),:]
-# 	centers.append(center1)
-# 	min_dis = distance_sq(data_set,center1)
-# 	for i in range(1,k):
-# 		pro = min_dis/np.sum(min_dis)
-# 		picked_index = np.random.choice(users_index,p=pro)
-# 		new_center = data_set[picked_index,:]
-# 		centers.append(new_center)
-# 		curr_dis = distance_sq(data_set,new_center)
-# 		min_dis = np.minimum(min_dis,curr_dis)
-# 		#print(i)
-# 	return np.stack(centers,axis=0)
+#   '''
+#   data_set: m x d numpy array, m is the number of users, d is the number of features
+#   k: number of centers
+#   return: the initial centers, k x d numpy array
+#   '''
+#   centers = []
+#   m,d = data_set.shape
+#   users_index = [i for i in range(m)]
+#   center1 = data_set[random.randint(0,m-1),:]
+#   centers.append(center1)
+#   min_dis = distance_sq(data_set,center1)
+#   for i in range(1,k):
+#       pro = min_dis/np.sum(min_dis)
+#       picked_index = np.random.choice(users_index,p=pro)
+#       new_center = data_set[picked_index,:]
+#       centers.append(new_center)
+#       curr_dis = distance_sq(data_set,new_center)
+#       min_dis = np.minimum(min_dis,curr_dis)
+#       #print(i)
+#   return np.stack(centers,axis=0)
 
 
 
