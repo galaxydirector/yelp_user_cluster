@@ -9,11 +9,7 @@ def kmc2(data_set, k, temperature):
 	q = 1/2/n + 1/2*dis/np.sum(dis)
 	scaled_q = np.log(q) / temperature
     scaled_q = np.exp(scaled_q - np.logaddexp.reduce(scaled_q))
-
-
-
-
-
+    
 	# block chain length m = 100
 	m = 100
 	for i in range(1,k):
