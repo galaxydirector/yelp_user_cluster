@@ -85,7 +85,11 @@ def kpp_init_centers(data_set, k):
 #       #print(i)
 #   return np.stack(centers,axis=0)
 
-
+def write_loss(data):
+	"""loss writer into csv"""
+	out_path = "./loss_random.csv"
+	output = pd.DataFrame(data, columns = ['iteration','mean_loss','max_loss','min_loss'])
+	output.to_csv(out_path,index=False,header=['iteration','mean_loss','max_loss','min_loss'],mode='w')
 
 def random_centers(data_set,k):
 	'''
@@ -138,18 +142,24 @@ def kmeans_singlebatch_update(batch_data, centers, eta):
 	return new_centers
 
 
-def kmeans_2(data_set, k, mini_size, iteration,centers):
+def kmeans_2(data_set, k, mini_size, iteration,centers, save_loss_tocsv=False):
 	# for loop iteration
 	m,d = data_set.shape
+	writedata = []
 	for i in range(1,iteration):
 		# select a small dataset
 		selected_ind = np.random.random_integers(0,m-1,mini_size)
 		new_centers = kmeans_singlebatch_update(data_set[selected_ind,:], centers, 1/i)
 		
-		# if(i%99==0):
-
+		if(i%1==0) and save_loss_tocsv:
+			mean_distance, max_distance, min_distance = evaluate(data_set,centers)
+			writedata.append((i,mean_distance, max_distance, min_distance))
+			# print("The mean distance is " + str(round(mean_distance,6)))
+			# print("The max distance is " + str(round(max_distance,6)))
+			# print("The min distance is " + str(round(min_distance,6)))
 		centers = new_centers
 
+	write_loss(writedata)
 	mean_distance, max_distance, min_distance = evaluate(data_set,centers)
 	print("The mean distance is " + str(round(mean_distance,6)))
 	print("The max distance is " + str(round(max_distance,6)))
@@ -172,7 +182,7 @@ def evaluate(data_set,centers):
 		updated_index = np.where(curr_dis<min_dis)[0]
 		clusters[updated_index] = i
 		min_dis[updated_index] = curr_dis[updated_index]
-	print("shape of min_dis", min_dis.shape)
+	# print("shape of min_dis", min_dis.shape)
 	mean_distance = np.mean(np.sqrt(min_dis))
 	max_distance = np.max(np.sqrt(min_dis))
 	min_distance = np.min(np.sqrt(min_dis))
