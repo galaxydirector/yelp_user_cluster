@@ -57,9 +57,9 @@ def single_train():
 	mini_size = 100000
 	iteration = 150
 
-	centers = random_centers(data_set,k)
+	# centers = random_centers(data_set,k)
 	# centers = kpp_init_centers(data_set,k)
-	# centers = kmc2(data_set, k, temperature = 0.8)
+	centers = kmc2(data_set, k, temperature = 0.8)
 	print('Centers initialization completed!')
 
 	kmeans_2(data_set, k, mini_size, iteration,centers,save_loss_tocsv=True)
@@ -102,5 +102,5 @@ def plot_2D_cluster():
 
 if __name__ == '__main__':
 	start = time.time()
-	single_train()
+	batch_train()
 	print("duration",time.time()-start)

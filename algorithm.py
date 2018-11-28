@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import random
 import time
 
@@ -87,7 +88,7 @@ def kpp_init_centers(data_set, k):
 
 def write_loss(data):
 	"""loss writer into csv"""
-	out_path = "./loss_random.csv"
+	out_path = "./loss_mcmcmodified.csv"
 	output = pd.DataFrame(data, columns = ['iteration','mean_loss','max_loss','min_loss'])
 	output.to_csv(out_path,index=False,header=['iteration','mean_loss','max_loss','min_loss'],mode='w')
 
